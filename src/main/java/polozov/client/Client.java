@@ -59,6 +59,29 @@ public class Client extends JFrame {
 
 	private void getFile(String filename) {
 		// TODO: 13.05.2021 downloading
+		try {
+			out.writeUTF("download");
+			out.writeUTF(filename);
+
+			long size = in.readLong();// file.length();
+			if (size >= 0){
+				File file = new File("client/" + filename);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				FileOutputStream fos = new FileOutputStream(file);
+				byte[] buffer = new byte[8 * 1024];
+				for (int i = 0; i < (size+ (8 * 1024 - 1)) / (8 * 1024); i++) {
+					int read = in.read(buffer);
+					fos.write(buffer, 0, read);
+				}
+				fos.close();
+				System.out.println("Download: ok" );
+			}else
+				System.out.println("Download failed: file not found ");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void sendFile(String filename) {
